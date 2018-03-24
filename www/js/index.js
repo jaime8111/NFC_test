@@ -1,27 +1,7 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-
- function log(msg) {
-     document.getElementById('log').innerHTML = document.getElementById('log').innerHTML + '<li>' + msg + '</li>';
- }
-
 var app = {
+    log: function (msg) {
+        document.getElementById('log').innerHTML = document.getElementById('log').innerHTML + '<li>' + msg + '</li>';
+    },
     // Application Constructor
     initialize: function() {
         this.bindEvents();
@@ -38,27 +18,24 @@ var app = {
     // The scope of 'this' is the event. In order to call the 'receivedEvent'
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function() {
-        app.receivedEvent('deviceready');
+        app.log('Deviceready');
 
-        app.receivedEvent('deviceready');
-
-        // Read NDEF formatted NFC Tags
+        // Be ready to read NDEF formatted NFC Tags
         nfc.addNdefListener (
             function (nfcEvent) {
                 var tag = nfcEvent.tag,
                     ndefMessage = tag.ndefMessage;
 
-                // dump the raw json of the message
-                // note: real code will need to decode
-                // the payload from each record
-                alert('60: ', JSON.stringify(ndefMessage));
+                app.log('>> FULL MESSAGE:');
+                app.log(ndefMessage);
 
-                // assuming the first record in the message has
-                // a payload that can be converted to a string.
-                log('payload');
                 var payload = nfc.bytesToString(ndefMessage[0].payload);
-                log(payload);
-                alert('payload--> ', payload);
+
+                app.log('>> USER DATA:');
+                app.log(payload);
+
+                payload = JSON.parse(payload);
+                app.log(payload.user);
             },
             function () { // success callback
                 //alert("Waiting for NDEF tag");
@@ -67,39 +44,5 @@ var app = {
                 //alert("Error adding NDEF listener " + JSON.stringify(error));
             }
         );
-
-        // Read NDEF formatted NFC Tags
-        nfc.addTagDiscoveredListener (
-            function (nfcEvent) {
-                var tag = nfcEvent.tag,
-                    ndefMessage = tag.ndefMessage;
-
-                // dump the raw json of the message
-                // note: real code will need to decode
-                // the payload from each record
-                alert('discovered: ' + JSON.stringify(ndefMessage));
-
-                // assuming the first record in the message has
-                // a payload that can be converted to a string.
-                alert('discovered: ' + nfc.bytesToString(ndefMessage[0].payload).substring(3));
-            },
-            function () { // success callback
-                //alert("discovered: Waiting for NDEF tag");
-            },
-            function (error) { // error callback
-                //alert("discovered: Error adding NDEF listener " + JSON.stringify(error));
-            }
-        );
-    },
-    // Update DOM on a Received Event
-    receivedEvent: function(id) {
-        var parentElement = document.getElementById(id);
-        var listeningElement = parentElement.querySelector('.listening');
-        var receivedElement = parentElement.querySelector('.received');
-
-        listeningElement.setAttribute('style', 'display:none;');
-        receivedElement.setAttribute('style', 'display:block;');
-
-        log('Received Event: ' + id);
     }
 };
