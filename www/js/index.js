@@ -40,12 +40,6 @@ var app = {
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
 
-        navigator.getBattery().then(function(battery) {
-            battery.onchargingchange = function() {
-                log('bat: '+ this.level);
-            };
-        });
-
         app.receivedEvent('deviceready');
 
         // Read NDEF formatted NFC Tags
@@ -57,17 +51,20 @@ var app = {
                 // dump the raw json of the message
                 // note: real code will need to decode
                 // the payload from each record
-                alert(JSON.stringify(ndefMessage));
+                alert('60: ', JSON.stringify(ndefMessage));
 
                 // assuming the first record in the message has
                 // a payload that can be converted to a string.
-                alert(nfc.bytesToString(ndefMessage[0].payload).substring(3));
+                log('payload');
+                var payload = nfc.bytesToString(ndefMessage[0].payload);
+                log(payload);
+                alert('payload--> ', payload);
             },
             function () { // success callback
-                alert("Waiting for NDEF tag");
+                //alert("Waiting for NDEF tag");
             },
             function (error) { // error callback
-                alert("Error adding NDEF listener " + JSON.stringify(error));
+                //alert("Error adding NDEF listener " + JSON.stringify(error));
             }
         );
 
@@ -84,13 +81,13 @@ var app = {
 
                 // assuming the first record in the message has
                 // a payload that can be converted to a string.
-                alert(nfc.bytesToString(ndefMessage[0].payload).substring(3));
+                alert('discovered: ' + nfc.bytesToString(ndefMessage[0].payload).substring(3));
             },
             function () { // success callback
-                alert("discovered: Waiting for NDEF tag");
+                //alert("discovered: Waiting for NDEF tag");
             },
             function (error) { // error callback
-                alert("discovered: Error adding NDEF listener " + JSON.stringify(error));
+                //alert("discovered: Error adding NDEF listener " + JSON.stringify(error));
             }
         );
     },
