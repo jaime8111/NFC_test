@@ -27,7 +27,7 @@ var app = {
                     ndefMessage = tag.ndefMessage;
 
                 app.log('>> FULL MESSAGE:');
-                app.log(ndefMessage);
+                app.log(JSON.stringify(ndefMessage));
 
                 var payload = nfc.bytesToString(ndefMessage[0].payload);
 
